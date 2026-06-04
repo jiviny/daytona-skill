@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Editor / OS junk
+*~
+*.un~
+.DS_Store
+Thumbs.db
+
+# LaTeX intermediates (the compiled PDF is committed; build files are not)
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Local scratch notes — not part of the skill deliverable.
+# Remove this line if you want to publish it.
+skill.txt

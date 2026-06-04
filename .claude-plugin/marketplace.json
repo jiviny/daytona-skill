@@ -1,0 +1,22 @@
+{
+  "name": "daytona-skills",
+  "owner": {
+    "name": "Daytona",
+    "email": "support@daytona.io"
+  },
+  "metadata": {
+    "description": "Daytona Agent Skills for running AI-generated code in secure, elastic sandboxes.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "daytona-sandbox",
+      "description": "Run, manage, and inspect code in Daytona secure elastic sandboxes via the Daytona Python/TypeScript SDK (preferred), the daytona CLI, or the bundled daytona-mcp tools. Teaches the full lifecycle: create, execute, sessions, git, files, snapshots, volumes, preview links, and cleanup.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/daytona-sandbox"
+      ]
+    }
+  ]
+}
