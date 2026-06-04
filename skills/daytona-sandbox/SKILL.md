@@ -42,18 +42,29 @@ If the user only wants code *written* (not run), you don't need a sandbox.
 
 ## Prerequisites & auth (do this first)
 
-1. A `DAYTONA_API_KEY` must be present in the environment. The SDK and CLI both read it
-   automatically. Never print, echo, or hardcode the key.
-   - Optional: `DAYTONA_API_URL` (default `https://app.daytona.io/api`), `DAYTONA_TARGET` (e.g. `us`).
-2. Verify connectivity before creating anything:
+Daytona has **two independent auth paths** — you need exactly one:
 
-   ```bash
-   python3 scripts/healthcheck.py
-   ```
+- **SDK / scripts path (preferred):** an **API key** in `DAYTONA_API_KEY`. Create one in the
+  Daytona dashboard (https://app.daytona.io → API Keys). **`daytona login` does NOT create this
+  key** — login authenticates the CLI/MCP over OAuth, which is a separate path. Never print,
+  echo, or hardcode the key.
+  - Optional: `DAYTONA_API_URL` (default `https://app.daytona.io/api`), `DAYTONA_TARGET` (e.g. `us`).
+- **CLI / MCP path:** a logged-in `daytona` CLI (`daytona login`) or a connected `daytona-mcp`
+  server. These work **without** `DAYTONA_API_KEY`.
 
-   If it reports a missing key, tell the user to set `DAYTONA_API_KEY` (get one at
-   https://app.daytona.io) or run `daytona login`, then stop — do not proceed.
-3. If `import daytona` fails, install it once: `pip install daytona`.
+Verify before creating anything:
+
+```bash
+python3 scripts/healthcheck.py
+```
+
+- Reports **READY** → use the SDK.
+- Reports the **API key is missing but the `daytona` CLI is authenticated** → use the **CLI**
+  (`daytona …`) or the **daytona-mcp** tools instead (see "Which surface to drive").
+- Reports **no usable auth** (no key, CLI not logged in, no MCP) → tell the user to either set
+  `DAYTONA_API_KEY` (dashboard → API Keys) **or** run `daytona login`, then stop.
+
+If `import daytona` fails, install it once: `pip install daytona`.
 
 ## The core lifecycle (the playbook)
 
