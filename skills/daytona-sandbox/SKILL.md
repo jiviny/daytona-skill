@@ -64,7 +64,10 @@ python3 scripts/healthcheck.py
 - Reports **no usable auth** (no key, CLI not logged in, no MCP) → tell the user to either set
   `DAYTONA_API_KEY` (dashboard → API Keys) **or** run `daytona login`, then stop.
 
-If `import daytona` fails, install it once: `pip install daytona`.
+If `import daytona` fails, install it for the **same interpreter** you run the scripts with:
+`python -m pip install daytona`. Gotcha: a bare `pip` can target a different interpreter than
+`python3` (common on Windows, where `python3` may be the Microsoft Store shim), so the import
+still fails — always use `python -m pip`, and run the scripts with that same `python`.
 
 ## The core lifecycle (the playbook)
 
