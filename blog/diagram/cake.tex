@@ -1,0 +1,48 @@
+% Standalone "capability cake" diagram — compile with: tectonic cake.tex
+% Renders just the diagram (auto-cropped), so it can be exported to PNG/SVG and
+% dropped into a blog post or Figma as a reference wireframe.
+\documentclass[tikz,border=12pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{xcolor}
+\usepackage{tikz}
+
+\definecolor{ink}{HTML}{0E1726}
+\definecolor{accent}{HTML}{49A078}
+\definecolor{tierA}{HTML}{1F3A4D}
+\definecolor{tierB}{HTML}{2C6E7F}
+\definecolor{tierC}{HTML}{49A078}
+\definecolor{cherry}{HTML}{E8553A}
+
+\begin{document}
+\begin{tikzpicture}[font=\sffamily, line width=0.6pt]
+  % upward "expertise" arrow
+  \draw[->, color=ink!35, line width=1pt] (-5.4,0) -- (-5.4,5.2);
+  \node[rotate=90, color=ink!55, font=\scriptsize] at (-5.75,2.6) {more expertise};
+
+  % Tier 1 — foundation model
+  \fill[tierA, rounded corners=8pt] (-4,0) rectangle (4,1.4);
+  \node[white] at (0,0.95) {\bfseries Foundation model};
+  \node[white!85, font=\scriptsize] at (0,0.45) {knows things \textperiodcentered\ reasons};
+  \node[tierA, right=7pt, font=\scriptsize\itshape] at (4,0.7) {Intelligence};
+
+  % Tier 2 — MCP / tools
+  \fill[tierB, rounded corners=8pt] (-3.1,1.55) rectangle (3.1,2.9);
+  \node[white] at (0,2.46) {\bfseries MCP \textnormal{\small / tools}};
+  \node[white!90, font=\scriptsize] at (0,1.98) {reaches data \textperiodcentered\ systems \textperiodcentered\ actions};
+  \node[tierB, right=7pt, font=\scriptsize\itshape] at (3.1,2.22) {Access};
+
+  % Tier 3 — Skills
+  \fill[tierC, rounded corners=8pt] (-2.2,3.05) rectangle (2.2,4.4);
+  \node[white] at (0,3.96) {\bfseries Skills};
+  \node[white!92, font=\scriptsize] at (0,3.5) {knows \emph{how} to do the job};
+  \node[tierC, right=7pt, font=\scriptsize\itshape] at (2.2,3.72) {Expertise};
+
+  % Cherry — the agent
+  \draw[accent, line width=1pt] (0,4.78) .. controls (0.25,5.15) and (0.55,5.1) .. (0.6,5.45);
+  \fill[cherry] (0,4.74) circle (0.26);
+  \node[ink, right=10pt, align=left] at (0.55,4.95)
+    {\scriptsize\bfseries Agent that ships\\[-1pt]\scriptsize\itshape Mastery};
+\end{tikzpicture}
+\end{document}

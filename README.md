@@ -21,6 +21,12 @@ LSP), and it costs ~100 tokens of context when idle versus a dozen tool schemas 
 every conversation. See [`skills/daytona-sandbox/reference/sdk-vs-mcp.md`](skills/daytona-sandbox/reference/sdk-vs-mcp.md)
 for the full map.
 
+## Launch post & diagram
+
+A short launch post, *"Skills vs MCPs,"* lives in [`blog/`](blog/) ([source](blog/skills-vs-mcps.tex) · [compiled PDF](blog/skills-vs-mcps.pdf)). Its central diagram — the "capability cake," where MCP and Skills are *different layers*, not competitors — is available standalone in [`blog/diagram/`](blog/diagram/) (TikZ source + PDF + PNG):
+
+![Capability cake: Foundation model → MCP → Skills → Agent that ships](blog/diagram/cake.png)
+
 ## Layout
 
 ```
