@@ -61,7 +61,7 @@
 \begin{document}
 \thispagestyle{empty}
 
-{\color{accent}\small\bfseries DAYTONA \ \textperiodcentered\ \ DOTFILES}\\[4pt]
+{\color{accent}\small\bfseries DAYTONA}\\[4pt]
 {\fontsize{30}{34}\selectfont\bfseries\color{ink} Skills vs MCPs}\\[6pt]
 {\large\color{ink!75} Two layers, one goal: agents that ship.}\\[2pt]
 {\footnotesize\color{ink!55} 3 min read}
@@ -70,28 +70,28 @@
 {\color{accent}\rule{\linewidth}{1.4pt}}
 \vspace{6pt}
 
-An MCP server hands an agent a box of tools. A Skill teaches it the craft to use them. They are not rivals --- they are different layers of the same cake. Today we are adding a new layer to Daytona: the \textbf{Daytona Skill} for Claude.
+An MCP server hands an agent a box of tools. A Skill teaches it the craft to use them. They are not rivals --- they are different layers. Today we are adding one to Daytona: the \textbf{Daytona Skill} for Claude.
 
 \textbf{\color{ink}Different layers, not competitors.}
 
-\textbf{MCP is access.} It is the standardized wiring that lets an agent reach an external system. The Daytona MCP gives Claude twelve tools --- create a Sandbox, run a command, clone a repo, hand back a preview link.
+\textbf{MCP is access.} It is the standardized wiring that lets an agent reach an external system. The Daytona MCP gives Claude twelve tools --- create a sandbox, run a command, clone a repo, hand back a preview link.
 
-\textbf{Skills are expertise.} A Skill is procedural know-how, loaded only when it is needed. The Daytona Skill teaches Claude \emph{when} to spin up a Sandbox, how to chain a build, when to snapshot, and to always clean up afterward.
+\textbf{Skills are expertise.} A Skill is procedural know-how, loaded only when it is needed. The Daytona Skill teaches Claude \emph{when} to spin up a sandbox, how to chain a build, when to snapshot, and to always clean up afterward.
 
-The tell: tools tell an agent what it \emph{can} do. A Skill tells it \emph{how} to do the job well. You want both.
+The difference: tools say what an agent \emph{can} do; a skill says \emph{how} to do it well. You want both.
 
 \cake
 
 \textbf{\color{ink}The Daytona Skill.}
 
-It packages everything we have learned about driving secure, sub-90-millisecond Sandboxes into a single playbook Claude reads on demand --- about 100 tokens of context until the moment it is needed, instead of a dozen tool definitions sitting in every conversation. And it drives the full Daytona SDK: persistent sessions, snapshots, volumes, and code execution --- the superset of what the MCP exposes.
+It packages everything we have learned about driving secure, sub-90ms sandboxes into a single playbook Claude reads on demand --- about 100 tokens of context until the moment it is needed, instead of a dozen tool definitions sitting in every conversation. And it drives the full Daytona SDK: persistent sessions, snapshots, volumes, and code execution --- the superset of what the MCP exposes.
 
-MCP gives your agent reach. Skills give it judgment. Together they give it mastery --- agents that don't just write code, they ship it.
+MCP gives your agent reach. Skills give it judgment. Together: an agent that runs the code it writes --- in a sandbox, and cleans up when it is done.
 
 \vspace{4pt}
 {\color{accent}\rule{\linewidth}{0.8pt}}
 \vspace{2pt}
 
-\textbf{The Daytona Skill is live.} \quad \href{https://www.daytona.io/docs}{Documentation} \ \textperiodcentered\ \ \href{https://github.com/daytonaio}{GitHub} \ \textperiodcentered\ \ \href{https://app.daytona.io}{Sign up}
+\textbf{The Daytona Skill is live.} \quad \href{https://www.daytona.io/docs}{Documentation} \ \textperiodcentered\ \ \href{https://github.com/jiviny/daytona-skill}{GitHub} \ \textperiodcentered\ \ \href{https://app.daytona.io}{Sign up}
 
 \end{document}

@@ -1,111 +1,72 @@
-================================================================================
-DAYTONA CLAUDE SKILL — LAUNCH BRIEF (for manager review, ~5 min read)
-================================================================================
+Daytona Skill for Claude — Launch Brief
 
-THE ONE-LINER
---------------
-"We built a Claude Skill for Daytona. Our MCP server already gives Claude the
-tools; the Skill gives it the know-how to use them well — and it costs ~100
-tokens of context instead of a dozen tool definitions loaded into every
-conversation. It's an addition to the MCP, not a replacement."
+Summary
+
+We built a Claude Skill for Daytona. The MCP server already gives Claude the tools;
+the Skill gives it the know-how to use them — at roughly 100 tokens of context when
+idle, versus a dozen tool definitions loaded into every conversation. It complements
+the MCP server; it does not replace it.
 
 
-THE 4 THINGS TO PRESENT (lead with #1)
---------------------------------------
-1. POSITIONING — Skills and MCP are complementary LAYERS, not competitors.
-   - "MCP is dead" is a myth (adoption is up; it's now under the Linux
-     Foundation). But the real, valid complaint about MCP — upfront token
-     bloat — is exactly what a Skill fixes.
-   - Anthropic's own rule: "If you're explaining HOW to do something, that's a
-     Skill. If you need Claude to ACCESS something, that's MCP." We keep the
-     MCP and add the expertise layer on top.
-   - Visual: the "capability cake" (model -> MCP -> Skills -> agent). See
-     blog/diagram/cake.png.
+What to present, in order
 
-2. STRATEGIC FIT — Daytona IS the thing the trend needs.
-   - The industry is moving from "call MCP tools" to "let the agent write and
-     RUN code." Anthropic's own guidance says that approach REQUIRES "a secure
-     execution environment with sandboxing." That is literally what Daytona
-     sells. The Skill turns the industry's main hesitation into our pitch.
+1. Positioning. Skills and MCP are layers, not competitors. "MCP is dead" is a myth —
+   adoption is up and the protocol is now under the Linux Foundation — but its real
+   flaw, upfront token bloat, is exactly what a Skill removes. Anthropic's own rule:
+   explaining how to do something is a Skill; giving Claude access to something is MCP.
+   We keep the MCP server and add the expertise layer on top. (Diagram: blog/diagram/cake.png.)
 
-3. IT WORKS — tested end-to-end against live Daytona.
-   - The skill's scripts created REAL sandboxes, ran code (print(2+2) -> 4),
-     ran shell commands with chaining, and cleaned up automatically.
-   - A fresh Claude agent, given a plain-English task (without naming the
-     skill), AUTO-TRIGGERED it, followed the playbook (checked auth first),
-     and even applied the safety guardrail (blocked network for untrusted
-     code). The skill drives behavior correctly.
+2. Strategic fit. The industry is shifting from "call MCP tools" to "let the agent run
+   code" — an approach Anthropic says requires a secure sandbox, which is what Daytona
+   sells.
 
-4. LOW COST, LOW RISK.
-   - Built by reading our actual MCP source — no redundancy. The Skill unlocks
-     the SDK superset the MCP lacks (persistent sessions, code execution,
-     snapshots, volumes, full git, lifecycle).
-   - Keeps the existing MCP. Open cross-vendor format (the same SKILL.md works
-     in Codex, Gemini CLI, Copilot, Cursor). Apache-2.0. Secrets never
-     committed (.env is gitignored).
+3. Proof. Tested end to end against live Daytona. A fresh Claude agent, given a plain
+   task without naming the skill, auto-triggered it, created a real sandbox, ran
+   print(2+2) and got 4, then tore the sandbox down.
+
+4. Cost and risk. Built from our own MCP source, with no overlap; it unlocks the SDK
+   superset the MCP server lacks (sessions, code execution, snapshots, volumes, full
+   git, lifecycle). Keeps the MCP server. Open, cross-vendor format. Apache-2.0. No
+   secrets in the repo.
 
 
-60-SECOND POSITIONING (the "why now")
--------------------------------------
-Developers complain MCP is bloated because every tool's schema is loaded into
-context before any work starts (Anthropic measured up to ~134K tokens; an
-independent test found an MCP costing ~137x the tokens of an equivalent CLI).
-Skills avoid this with "progressive disclosure": ~100 tokens until the moment
-the skill is needed. So the Skill is both better positioning AND cheaper to run
-than piling on MCP tools — while still complementing the MCP we already ship.
+Live demo, two minutes
 
+1. Show the diagram (blog/diagram/cake.png): two layers, one goal.
+2. In Claude Code, with DAYTONA_API_KEY set, type a natural request:
+   "Run this untrusted Python — print(2+2) — in an isolated sandbox, show the output,
+   then tear it down."
+3. Narrate as it runs: Claude reports "Launching skill: daytona-sandbox," checks auth,
+   creates a sandbox, returns 4, and destroys it.
 
-2-MINUTE LIVE DEMO (do this in front of the manager)
-----------------------------------------------------
-1. Show the cake diagram (blog/diagram/cake.png) — "two layers, one goal."
-2. In Claude Code (with DAYTONA_API_KEY set), type a NATURAL request, e.g.:
-     "I have some untrusted Python that just prints 2+2 — run it in an isolated
-      sandbox, show the output, then tear it down."
-3. Point out, as it happens:
-     - "Launching skill: daytona-sandbox"  <- it auto-picked the skill.
-     - It checks auth, spins up a real sandbox, returns 4, and destroys it.
-4. Open the repo: SKILL.md (the playbook), scripts/ (deterministic helpers),
-   and the "Skills vs MCPs" launch blog.
-
-(If the laptop's Python is finicky, fall back to the rock-solid script demo:
+Offline fallback (no key in the shell):
    python skills/daytona-sandbox/scripts/run_in_sandbox.py --code "print(2+2)"
- -> prints the sandbox id, "4", and "destroyed sandbox ...".)
 
 
-PROOF POINTS (evidence, if asked)
----------------------------------
-- healthcheck.py -> READY (reached the Daytona control plane).
-- run_in_sandbox.py --code "print(2+2)" -> created sandbox, output 4, destroyed.
-- run_in_sandbox.py --command -> Python 3.14 in-sandbox, shell '&&' chaining, ran
-  as the 'daytona' user, destroyed.
-- Autonomous agent run (headless, fresh Claude agent) -> auto-triggered the
-  skill from a natural prompt WITHOUT being named, verified auth, created a real
-  sandbox (79416419-87d1-402c-af45-dc1946f73d3d), ran print(2+2) -> 4, and
-  destroyed it. Exit 0, no errors, nothing left running. This is the full
-  end-to-end proof: agent + skill -> live sandbox -> correct result -> cleanup.
+Evidence
+
+- healthcheck.py reached the Daytona control plane and reported READY.
+- run_in_sandbox.py --code "print(2+2)" created a sandbox, returned 4, and destroyed it.
+- run_in_sandbox.py --command ran Python 3.14 in the sandbox with shell chaining, then
+  cleaned up.
+- A headless Claude agent auto-triggered the Skill from a natural prompt, created sandbox
+  79416419-87d1-402c-af45-dc1946f73d3d, ran print(2+2) to get 4, and destroyed it. Exit 0.
 
 
-LIKELY MANAGER QUESTIONS
-------------------------
-Q: Does this replace our MCP?
-A: No — complementary. MCP = connectivity; Skill = know-how. Ship both.
+Anticipated questions
 
-Q: What does it cost us to maintain?
-A: Almost nothing. The MCP already ships; the Skill is markdown + a couple of
-   thin Python scripts. The SDK it wraps is the same one customers already use.
-
-Q: Does it only work in Claude?
-A: No. SKILL.md is an open standard read by Codex, Gemini CLI, Copilot, Cursor.
-
-Q: Security?
-A: The Skill teaches network lockdown for untrusted code and never stores
-   secrets; the API key is read from the environment, never committed.
+- Does it replace the MCP server? No. MCP is connectivity; the Skill is know-how. Ship both.
+- Maintenance cost? Minimal. The MCP server already ships; the Skill is Markdown plus two
+  small scripts over the SDK customers already use.
+- Claude only? No. SKILL.md is an open format also read by Codex, Gemini CLI, Copilot, and Cursor.
+- Security? Untrusted code runs with the network locked down, and the API key is read from
+  the environment, never committed.
 
 
-THE ASK / NEXT STEPS
---------------------
-- Approve publishing the public Skill + the "Skills vs MCPs" launch blog.
-- (Later, optional) Ship a lean REMOTE MCP for surfaces that can't run a
-  sandbox (web Claude, ChatGPT) — the one place a local Skill can't reach.
+The ask
+
+- Approve publishing the Skill and the "Skills vs MCPs" launch post.
+- Later, optional: a lean remote MCP for surfaces that can't run a sandbox (web Claude,
+  ChatGPT) — the one place a local Skill can't reach.
 
 Repo: https://github.com/jiviny/daytona-skill

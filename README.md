@@ -1,98 +1,80 @@
-# Daytona Agent Skills for Claude
+# Daytona Skill for Claude
 
 A [Claude Agent Skill](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
-that teaches Claude **how to drive Daytona** — secure, elastic sandboxes for running AI-generated
-code. It is the procedural-knowledge layer that sits on top of Daytona's existing connectivity
-(the Python/TypeScript SDK, the `daytona` CLI, and the `daytona-mcp` server).
+that teaches Claude to run code in Daytona sandboxes. It complements the Daytona MCP server: the
+MCP connects Claude to Daytona; the Skill is the procedural layer that tells Claude how to use it
+well — and how to reach the full SDK when the MCP's 12 tools aren't enough.
 
-## Why a Skill (and not just the MCP)?
+![Foundation model → MCP → Skills → agent](blog/diagram/cake.png)
 
-The Daytona **MCP server** is the *connection* — 12 thin, stateless tools over Daytona's API.
-A **Skill** is the *know-how*: when to spin up a sandbox, how to chain a build when `exec` is
-stateless, when to snapshot, how to expose a preview, and to always clean up. They're
-complementary layers, per [Anthropic's own guidance](https://claude.com/blog/extending-claude-capabilities-with-skills-mcp-servers):
+## Skill vs. MCP server
 
-> "If you're explaining **how** to do something, that's a skill. If you need Claude to
-> **access** something, that's MCP."
+The MCP server is the connection: 12 stateless tools over the Daytona API. The Skill is the
+know-how — when to create a sandbox, how to chain a build when `exec` is stateless, when to
+snapshot, how to expose a preview, and to always clean up. Anthropic frames the two as layers,
+not alternatives:
 
-The Skill also drives the **Python SDK**, which is a strict superset of the MCP's 12 tools
-(sessions, `code_run`, snapshots, volumes, full git, rich filesystem, lifecycle, computer-use,
-LSP), and it costs ~100 tokens of context when idle versus a dozen tool schemas loaded into
-every conversation. See [`skills/daytona-sandbox/reference/sdk-vs-mcp.md`](skills/daytona-sandbox/reference/sdk-vs-mcp.md)
-for the full map.
+> If you're explaining how to do something, that's a skill. If you need Claude to access
+> something, that's MCP.
 
-## Launch post & diagram
-
-A short launch post, *"Skills vs MCPs,"* lives in [`blog/`](blog/) ([source](blog/skills-vs-mcps.tex) · [compiled PDF](blog/skills-vs-mcps.pdf)). Its central diagram — the "capability cake," where MCP and Skills are *different layers*, not competitors — is available standalone in [`blog/diagram/`](blog/diagram/) (TikZ source + PDF + PNG):
-
-![Capability cake: Foundation model → MCP → Skills → Agent that ships](blog/diagram/cake.png)
+The Skill drives the Daytona Python SDK — a superset of the MCP's tools (sessions, `code_run`,
+snapshots, volumes, full git, lifecycle) — and adds ~100 tokens of context when idle, versus a
+dozen tool schemas loaded into every conversation. Full comparison:
+[`reference/sdk-vs-mcp.md`](skills/daytona-sandbox/reference/sdk-vs-mcp.md).
 
 ## Layout
 
 ```
-.
-├── .claude-plugin/
-│   └── marketplace.json          # plugin registry (publish this repo as a marketplace)
-└── skills/
-    └── daytona-sandbox/
-        ├── SKILL.md              # entrypoint: overview + lifecycle playbook + links
-        ├── LICENSE.txt
-        ├── reference/            # loaded on demand (progressive disclosure)
-        │   ├── sandboxes.md      # create / configure / snapshot / volumes / destroy
-        │   ├── exec.md           # commands, code_run, sessions, env, git
-        │   ├── files.md          # filesystem operations
-        │   ├── preview.md        # preview links
-        │   └── sdk-vs-mcp.md     # what the MCP covers vs the SDK superset
-        ├── examples/
-        │   ├── run-python.md
-        │   └── clone-and-test.md
-        └── scripts/              # executed via bash; code never enters context
-            ├── healthcheck.py    # verify DAYTONA_API_KEY + connectivity
-            └── run_in_sandbox.py # deterministic create -> run -> destroy helper
+.claude-plugin/marketplace.json   Plugin registry (publish this repo as a marketplace)
+skills/daytona-sandbox/
+  SKILL.md                        Entry point: lifecycle playbook + links
+  reference/                      Loaded on demand (progressive disclosure)
+    sandboxes.md, exec.md, files.md, preview.md, sdk-vs-mcp.md
+  examples/                       run-python.md, clone-and-test.md
+  scripts/                        Run via bash; code never enters context
+    healthcheck.py                Verify DAYTONA_API_KEY + connectivity
+    run_in_sandbox.py             Deterministic create → run → destroy helper
+blog/                             "Skills vs MCPs" launch post + capability diagram
 ```
 
-## Prerequisites
+## Quick start
 
-- A Daytona API key: set `DAYTONA_API_KEY` in the environment (get one at https://app.daytona.io),
-  or run `daytona login`.
-- Python with the SDK for the bundled scripts: `pip install daytona`.
+Set a Daytona API key (create one at https://app.daytona.io → API Keys) and install the SDK for
+the bundled scripts:
+
+```bash
+export DAYTONA_API_KEY=...        # PowerShell: $env:DAYTONA_API_KEY = "..."
+python -m pip install daytona
+python skills/daytona-sandbox/scripts/healthcheck.py    # expect: READY
+```
 
 ## Install
 
-### Claude Code (via plugin marketplace)
+Claude Code, via the plugin marketplace:
 
 ```bash
-/plugin marketplace add daytonaio/claude-skills      # this repo
+/plugin marketplace add jiviny/daytona-skill
 /plugin install daytona-sandbox@daytona-skills
 ```
 
-### Claude Code (local, for development/testing)
-
-Copy or symlink the skill into a skills directory Claude Code reads:
+Claude Code, local:
 
 ```bash
-# project-scoped (this repo only):
-mkdir -p .claude/skills && cp -r skills/daytona-sandbox .claude/skills/
-# or personal (all projects):
-cp -r skills/daytona-sandbox ~/.claude/skills/
+cp -r skills/daytona-sandbox ~/.claude/skills/      # personal (all projects)
+cp -r skills/daytona-sandbox .claude/skills/        # or: this project only
 ```
 
-Then verify it's picked up with `/skills`, or invoke directly with `/daytona-sandbox`.
+Confirm with `/skills`, or invoke directly with `/daytona-sandbox`.
 
-### claude.ai / Claude API
+claude.ai and the API take the `skills/daytona-sandbox` folder directly (claude.ai: Settings →
+Capabilities → Skills; API: the `/v1/skills` endpoints). Skills don't sync across surfaces —
+install on each. The bundled scripts need a code-execution environment with network access;
+Claude Code has it, the bare API surface does not (use the MCP server there).
 
-- claude.ai: zip the `skills/daytona-sandbox` folder and upload via Settings → Capabilities → Skills.
-- API: upload via the `/v1/skills` endpoints (workspace-wide).
+## Launch post
 
-> Note: Skills don't sync across surfaces — install on each surface you use. Bundled scripts
-> need a code-execution environment **with network access** (Claude Code has it; the bare Claude
-> API surface does not — there, use the `daytona-mcp` server instead).
-
-## Verify
-
-```bash
-python3 skills/daytona-sandbox/scripts/healthcheck.py
-```
+`blog/skills-vs-mcps.tex` ([PDF](blog/skills-vs-mcps.pdf)) — a short post on why Skills and MCP
+are different layers. The capability diagram is standalone in [`blog/diagram/`](blog/diagram/).
 
 ## License
 
